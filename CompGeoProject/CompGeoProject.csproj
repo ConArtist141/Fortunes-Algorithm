@@ -51,6 +51,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Geometry.cs" />
+    <Compile Include="VoronoiConstructor.cs" />
     <Compile Include="VoronoiGraph.cs" />
     <Compile Include="HeapPriorityQueue.cs" />
     <Compile Include="NaiveStatus.cs" />

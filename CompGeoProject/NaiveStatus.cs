@@ -111,7 +111,7 @@ namespace CompGeoProject
             separators.RemoveAt(i);
         }
 
-        public void Split(VoronoiArcObject currentObj, VoronoiArcObject newObj, 
+        public void SplitArc(VoronoiArcObject currentObj, VoronoiArcObject newObj, 
             HalfEdge splittingEdgeCurrentSide, HalfEdge splittingEdgeNewSide)
         {
             var i = arcs.IndexOf(currentObj);

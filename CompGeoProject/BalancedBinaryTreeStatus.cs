@@ -298,7 +298,7 @@ namespace CompGeoProject
             PropogateRankOnDelete(twin);
         }
 
-        public void Split(VoronoiArcObject currentObj, VoronoiArcObject newObj, 
+        public void SplitArc(VoronoiArcObject currentObj, VoronoiArcObject newObj, 
             HalfEdge splittingEdgeCurrentSide, HalfEdge splittingEdgeNewSide)
         {
             var node = LeafMap[currentObj];

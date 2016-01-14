@@ -124,7 +124,9 @@ namespace CompGeoProject
         }
 
         /// <summary>
-        ///  Computes the point equidistant from two points and a line (given by y = yLine)
+        ///  Computes the point equidistant from two points and a line (given by y = yLine).
+        ///  There are two such points, if p1.Y > p2.Y, we return the one with the lower
+        ///  X-coordinate. Otherwise, we return the one with the higher X-coordinate.
         /// </summary>
         /// <param name="p1">First point</param>
         /// <param name="p2">Second point</param>

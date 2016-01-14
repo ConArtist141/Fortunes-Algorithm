@@ -144,7 +144,7 @@ namespace CompGeoProject
         /// <param name="newArc">The new arc to insert</param>
         /// <param name="splittingEdgeCurrentSide">The splitting edge on the left of the new arc</param>
         /// <param name="splittingEdgeNewSide">The splitting edge on the right of the new arc</param>
-        void Split(VoronoiArcObject splitArc, VoronoiArcObject newArc, 
+        void SplitArc(VoronoiArcObject splitArc, VoronoiArcObject newArc, 
             HalfEdge splittingEdgeCurrentSide, HalfEdge splittingEdgeNewSide);
 
         /// <summary>
@@ -258,7 +258,7 @@ namespace CompGeoProject
                 edge2.Face = newArc.Site.ID;
 
                 // Perform the split
-                status.Split(arc, newArc, edge1, edge2);
+                status.SplitArc(arc, newArc, edge1, edge2);
 
                 HalfEdge a1, a2;
                 status.GetNeighborhood(newArc, out leftLeftArc, out leftArc,

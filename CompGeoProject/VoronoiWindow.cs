@@ -2,7 +2,7 @@
  * Author: Philip Etter
  *
  * Description: Main application code of my program. The voronoi window uses
- * OpenGL to display the results of the voronoi graph computation. The key
+ * OpenTK to display the results of the voronoi graph computation. The key
  * 'Space' can be used to recompute a new random graph. The key 'V' can be used
  * to toggle the display of vertices in the voronoi graph. The key 'S' can be
  * used to toggle the display of sites in the voronoi graph.

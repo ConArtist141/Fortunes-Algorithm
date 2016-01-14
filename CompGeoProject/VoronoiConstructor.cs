@@ -60,6 +60,7 @@ namespace CompGeoProject
 
     interface IVoronoiStatusStructure
     {
+        VoronoiGraph Graph { get; set; }
         bool IsEmpty { get; }
         void Insert(VoronoiArcObject obj);
         void GetNeighborhood(VoronoiArcObject obj, out VoronoiArcObject prevPrev, out VoronoiArcObject prev,
@@ -70,7 +71,13 @@ namespace CompGeoProject
         VoronoiArcObject FindArcAbove(Vector2d point, double yLine);
     }
 
-    class VoronoiConstructor
+    interface IVoronoiConstructor
+    {
+        VoronoiGraph CreateVoronoi(List<Vector2d> points);
+    }
+
+    class VoronoiConstructor<StatusClass> : IVoronoiConstructor
+        where StatusClass : IVoronoiStatusStructure, new()
     {
         public static double CCW(Vector2d a, Vector2d b, Vector2d c)
         {
@@ -228,7 +235,9 @@ namespace CompGeoProject
 
             var graph = new VoronoiGraph();
             var queue = new HeapPriorityQueue<VoronoiEvent>(points.Count * 10);
-            IVoronoiStatusStructure status = new NaiveStatus(graph);
+            // IVoronoiStatusStructure status = new DefaultStatus(graph);
+            IVoronoiStatusStructure status = new StatusClass();
+            status.Graph = graph;
 
             // Insert all the events and faces
             for (int i = 0, count = points.Count; i < count; ++i)

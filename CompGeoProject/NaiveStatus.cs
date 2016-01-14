@@ -12,11 +12,7 @@ namespace CompGeoProject
         private List<HalfEdge> separators = new List<HalfEdge>();
         private List<VoronoiArcObject> arcs = new List<VoronoiArcObject>();
         private VoronoiGraph graph;
-
-        public NaiveStatus(VoronoiGraph graph)
-        {
-            this.graph = graph;
-        }
+        private int debugCalls = 0;
 
         public bool IsEmpty
         {
@@ -24,6 +20,25 @@ namespace CompGeoProject
             {
                 return arcs.Count == 0;
             }
+        }
+
+        public VoronoiGraph Graph
+        {
+            get { return graph; }
+            set { graph = value; }
+        }
+
+        private void DebugCheck()
+        {
+            Console.WriteLine("Debug Check {0}: ", debugCalls++);
+            Console.WriteLine("Arcs:");
+            foreach (var arc in arcs)
+                Console.Write("{0} ", arc);
+            Console.WriteLine();
+            Console.WriteLine("Separators:");
+            foreach (var sep in separators)
+                Console.Write("{0} ", sep);
+            Console.WriteLine();
         }
 
         public VoronoiArcObject FindArcAbove(Vector2d point, double yLine)

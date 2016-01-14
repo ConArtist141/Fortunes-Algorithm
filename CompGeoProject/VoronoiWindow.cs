@@ -7,12 +7,23 @@ using System.Threading.Tasks;
 using System.Drawing;
 
 using OpenTK;
+/*******************************************************************************
+ * Author: Philip Etter
+ *
+ * Description: This file contains the main application code
+ *******************************************************************************/
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Platform;
 using OpenTK.Input;
 
 namespace CompGeoProject
 {
+    enum AlgorithmVersion
+    {
+        Naive,
+        BalancedBinaryTree
+    }
+
     class VoronoiWindow : GameWindow
     {
         protected VoronoiGraph graph;
@@ -20,6 +31,8 @@ namespace CompGeoProject
         public const float VertexSize = 5.0f;
         protected bool bDisplayVertices = false;
         protected bool bDisplaySites = true;
+        public const int PointCount = 100;
+        public AlgorithmVersion Algorithm = AlgorithmVersion.BalancedBinaryTree;
 
         public VoronoiWindow()
             : base(800, 600, new OpenTK.Graphics.GraphicsMode(new OpenTK.Graphics.ColorFormat(8), 24, 8, 8))
@@ -38,14 +51,19 @@ namespace CompGeoProject
                     GenerateGraph();
             };
         }
-       
+
         protected void GenerateGraph()
         {
             var random = new Random();
 
-            var pts = (from i in Enumerable.Range(0, 100) select new Vector2d(random.NextDouble() * 2.0 - 1.0, random.NextDouble() * 2.0 - 1.0)).ToList();
+            var pts = (from i in Enumerable.Range(0, PointCount) select new Vector2d(random.NextDouble() * 2.0 - 1.0, random.NextDouble() * 2.0 - 1.0)).ToList();
 
-            var constructor = new VoronoiConstructor();
+            IVoronoiConstructor constructor;
+            if (Algorithm == AlgorithmVersion.BalancedBinaryTree)
+                constructor = new VoronoiConstructor<BalancedBinaryTreeStatus>();
+            else
+                constructor = new VoronoiConstructor<NaiveStatus>();
+
             var graphResult = constructor.CreateVoronoi(pts);
             graphResult.Complete(2f);
 

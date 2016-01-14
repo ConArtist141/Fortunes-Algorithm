@@ -30,7 +30,7 @@ namespace CompGeoProject
     }
 
     /// <summary>
-    /// A half edge in a voronoi graph
+    /// A half edge in a voronoi graph.
     /// </summary>
     class HalfEdge
     {
@@ -47,7 +47,7 @@ namespace CompGeoProject
     }
 
     /// <summary>
-    /// A vertex in a voronoi graph
+    /// A vertex in a voronoi graph.
     /// </summary>
     class Vertex
     {
@@ -62,7 +62,7 @@ namespace CompGeoProject
     }
 
     /// <summary>
-    /// A half-edge representation of a voronoi graph
+    /// A half-edge representation of a voronoi graph.
     /// </summary>
     class VoronoiGraph
     {

@@ -2,7 +2,7 @@
  * Author: Philip Etter
  *
  * Description: A class which constructs a voronoi graph from a set of input
- * points.
+ * points. The voronoi graph is generated using Fortune's algorithm.
  *******************************************************************************/
 
 using System;

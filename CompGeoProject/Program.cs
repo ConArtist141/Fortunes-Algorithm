@@ -55,15 +55,20 @@ namespace CompGeoProject
 
             var random = new Random();
 
+            // Create and warm up the stopwatch
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            stopwatch.Stop();
+
             foreach (var run in runs)
             {
-                var stopwatch = new Stopwatch();
                 var constructor = new VoronoiConstructor<BalancedBinaryTreeStatus>();
 
                 var pts = new Vector2d[run];
                 for (int i = 0; i < run; ++i)
                     pts[i] = new Vector2d(random.NextDouble() * 2.0 - 1.0, random.NextDouble() * 2.0 - 1.0);
 
+                // Time how long it takes for the constructor to run
                 stopwatch.Reset();
                 stopwatch.Start();
                 constructor.CreateVoronoi(pts);

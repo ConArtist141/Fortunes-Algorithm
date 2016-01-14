@@ -58,18 +58,27 @@ namespace CompGeoProject
         /// </summary>
         protected bool bDisplaySites = true;
         /// <summary>
+        /// The default number of random sites to generator
+        /// </summary>
+        public const int DefaultSiteCount = 100;
+        /// <summary>
         /// The number of random sites to generate.
         /// </summary>
-        public const int SiteCount = 100;
+        public int SiteCount;
         /// <summary>
         /// The algorithm to use. Should be set to balanced binary tree for optimal performance.
         /// </summary>
         public AlgorithmVersion Algorithm = AlgorithmVersion.BalancedBinaryTree;
 
-        public VoronoiWindow()
+        public VoronoiWindow() : this(DefaultSiteCount)
+        {
+        }
+
+        public VoronoiWindow(int siteCount)
             : base(800, 600, new OpenTK.Graphics.GraphicsMode(new OpenTK.Graphics.ColorFormat(8), 24, 8, 8))
         {
             Title = "Voronoi Diagrams: Fortune's Algorithm";
+            SiteCount = siteCount;
 
             // Handle keyboard actions
             Keyboard.KeyDown += (object o, KeyboardKeyEventArgs e) =>
@@ -93,8 +102,9 @@ namespace CompGeoProject
             var random = new Random();
 
             // Generate random points in the [-1, 1] x [-1, 1] range
-            var pts = (from i in Enumerable.Range(0, SiteCount)
-                       select new Vector2d(random.NextDouble() * 2.0 - 1.0, random.NextDouble() * 2.0 - 1.0)).ToList();
+            var pts = new Vector2d[SiteCount];
+            for (int i = 0; i < SiteCount; ++i)
+                pts[i] = new Vector2d(random.NextDouble() * 2.0 - 1.0, random.NextDouble() * 2.0 - 1.0);
 
             // Create the voronoi constructor
             IVoronoiConstructor constructor;

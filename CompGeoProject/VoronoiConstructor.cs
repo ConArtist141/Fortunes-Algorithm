@@ -161,7 +161,7 @@ namespace CompGeoProject
     /// </summary>
     interface IVoronoiConstructor
     {
-        VoronoiGraph CreateVoronoi(List<Vector2d> points);
+        VoronoiGraph CreateVoronoi(Vector2d[] points);
     }
 
     /// <summary>
@@ -335,18 +335,18 @@ namespace CompGeoProject
                 ComputeCircleEvent(prev, succ, succSucc, queue, evnt.LocationY);
         }
 
-        public VoronoiGraph CreateVoronoi(List<Vector2d> points)
+        public VoronoiGraph CreateVoronoi(Vector2d[] points)
         {
-            points.Sort((p1, p2) => (p1.Y > p2.Y) ? -1 : 1);
+            Array.Sort(points, (p1, p2) => (p1.Y > p2.Y) ? -1 : 1);
 
             var graph = new VoronoiGraph();
-            var queue = new HeapPriorityQueue<VoronoiEvent>(points.Count * 10);
+            var queue = new HeapPriorityQueue<VoronoiEvent>(points.Length * 10);
             // IVoronoiStatusStructure status = new DefaultStatus(graph);
             IVoronoiStatusStructure status = new StatusClass();
             status.Graph = graph;
 
             // Insert all the events and faces
-            for (int i = 0, count = points.Count; i < count; ++i)
+            for (int i = 0, count = points.Length; i < count; ++i)
             {
                 var site = new VoronoiSiteFace() { ID = i, Edge = -1, Location = points[i] };
                 graph.Faces.Add(site);

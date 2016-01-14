@@ -81,11 +81,11 @@ namespace CompGeoProject
     }
 
     /// <summary>
-    /// A beach line status structure which uses a balanced binary tree internally. Nodes in the tree are either arc nodes or
-    /// separator nodes corresponding to splitting lines between arcs. The leaves of the tree are all arc nodes and they form
-    /// a doubly linked list at the bottom of the tree. The way the tree is balanced is similar to the AA tree, but since
-    /// there are very strict rules regarding when nodes are inserted and deleted, the AA tree data structure has been modified
-    /// for this particular situtation.
+    /// A beach line status structure which uses a balanced binary tree internally. Nodes in the tree are either arc nodes 
+    /// corresponding to arcs in the beach line or separator nodes corresponding to splitting lines between arcs. The leaves 
+    /// of the tree are all arc nodes and they form a doubly linked list at the bottom of the tree. The way the tree is balanced 
+    /// is similar to the AA tree, but since there are very strict rules regarding when nodes are inserted and deleted, the AA 
+    /// tree data structure has been modified for this particular situtation.
     /// </summary>
     class BalancedBinaryTreeStatus : IVoronoiStatusStructure
     {

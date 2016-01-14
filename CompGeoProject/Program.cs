@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*******************************************************************************
+ * Author: Philip Etter
+ *
+ * Description: Entry point for the application.
+ *******************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

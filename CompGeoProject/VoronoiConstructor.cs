@@ -1,4 +1,11 @@
-﻿using System;
+﻿/*******************************************************************************
+ * Author: Philip Etter
+ *
+ * Description: A class which constructs a voronoi graph from a set of input
+ * points.
+ *******************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,12 +22,33 @@ namespace CompGeoProject
         CircleEvent
     }
 
+    /// <summary>
+    /// An event in the algorithm's vertical line sweep.
+    /// </summary>
     class VoronoiEvent : PriorityQueueNode
     {
+        /// <summary>
+        /// The type of event.
+        /// </summary>
         public VoronoiEventType Type;
+        /// <summary>
+        /// The Y-position this event occurs at, used for priority queue sorting.
+        /// </summary>
         public double LocationY;
+        /// <summary>
+        /// If this is a circle event, this is the center of the circle in question.
+        /// </summary>
         public Vector2d CircleCenter;
+        /// <summary>
+        /// An array of the sites involved. If this is a site event, then this simply
+        /// contains the one site involed. Otherwise, if this is a circle event, it
+        /// contains the site of the arc which will vanish and the sites of its two 
+        /// neighboring arcs in left to right order along the beach line.
+        /// </summary>
         public VoronoiSiteFace[] Sites;
+        /// <summary>
+        /// If this is a circle event, this is the vanishing arc.
+        /// </summary>
         public VoronoiArcObject ArcObject;
 
         public static VoronoiEvent CreateSiteEvent(VoronoiSiteFace site)
@@ -47,9 +75,18 @@ namespace CompGeoProject
         }
     }
 
+    /// <summary>
+    /// An object to represent an arc on the beach line.
+    /// </summary>
     class VoronoiArcObject
     {
+        /// <summary>
+        /// The site associated with this arc.
+        /// </summary>
         public VoronoiSiteFace Site;
+        /// <summary>
+        /// The circle event associated with this arc (if any).
+        /// </summary>
         public VoronoiEvent Event;
 
         public override string ToString()
@@ -58,24 +95,78 @@ namespace CompGeoProject
         }
     }
 
+    /// <summary>
+    /// An interface to a status structure which can be used to maintain the beach line.
+    /// </summary>
     interface IVoronoiStatusStructure
     {
+        /// <summary>
+        /// Gets or sets the voronoi graph containing the half-edges used as separators in the line.
+        /// </summary>
         VoronoiGraph Graph { get; set; }
+
+        /// <summary>
+        /// Gets whether this structure is empty.
+        /// </summary>
         bool IsEmpty { get; }
+
+        /// <summary>
+        /// If the structure is empty, this can be used to insert the first arc.
+        /// </summary>
+        /// <param name="obj">Arc to insert</param>
         void Insert(VoronoiArcObject obj);
+
+        /// <summary>
+        /// Get the immediate neighborhood of an arc.
+        /// </summary>
+        /// <param name="obj">The arc in question</param>
+        /// <param name="prevPrev">The arc two places to the left on the beach line</param>
+        /// <param name="prev">The arc one place to the left on the beach line</param>
+        /// <param name="succ">The arc one place to the right on the beach line</param>
+        /// <param name="succSucc">The arc two places to the right on the beach line</param>
+        /// <param name="prevSplittingEdge">The splitting edge to the left on the beach line</param>
+        /// <param name="succSplittingEdge">The splitting edge to the right on the beach line</param>
         void GetNeighborhood(VoronoiArcObject obj, out VoronoiArcObject prevPrev, out VoronoiArcObject prev,
             out VoronoiArcObject succ, out VoronoiArcObject succSucc,
             out HalfEdge prevSplittingEdge, out HalfEdge succSplittingEdge);
+
+        /// <summary>
+        /// Remove an arc from the beach line.
+        /// </summary>
+        /// <param name="obj">The arc to remove</param>
+        /// <param name="replacementEdge">The separating edge to replace it with</param>
         void Remove(VoronoiArcObject obj, HalfEdge replacementEdge);
-        void Split(VoronoiArcObject currentObj, VoronoiArcObject newObj, HalfEdge splittingEdgeCurrentSide, HalfEdge splittingEdgeNewSide);
+
+        /// <summary>
+        /// Create a new arc by splitting a current one on the beach line.
+        /// </summary>
+        /// <param name="splitArc">The arc to split</param>
+        /// <param name="newArc">The new arc to insert</param>
+        /// <param name="splittingEdgeCurrentSide">The splitting edge on the left of the new arc</param>
+        /// <param name="splittingEdgeNewSide">The splitting edge on the right of the new arc</param>
+        void Split(VoronoiArcObject splitArc, VoronoiArcObject newArc, HalfEdge splittingEdgeCurrentSide, HalfEdge splittingEdgeNewSide);
+
+        /// <summary>
+        /// Find the arc above the specified point.
+        /// </summary>
+        /// <param name="point">The point to search with</param>
+        /// <param name="yLine">The Y-position of the sweep line</param>
+        /// <returns>The arc above the point specified</returns>
         VoronoiArcObject FindArcAbove(Vector2d point, double yLine);
     }
 
+    /// <summary>
+    /// An interface to a class which can construct a voronoi graph.
+    /// </summary>
     interface IVoronoiConstructor
     {
         VoronoiGraph CreateVoronoi(List<Vector2d> points);
     }
 
+    /// <summary>
+    /// Default voronoi constructor.
+    /// </summary>
+    /// <typeparam name="StatusClass">The status object type used to represent the beach line</typeparam>
     class VoronoiConstructor<StatusClass> : IVoronoiConstructor
         where StatusClass : IVoronoiStatusStructure, new()
     {
@@ -84,15 +175,24 @@ namespace CompGeoProject
             return new Matrix3d(a.X, a.Y, 1.0, b.X, b.Y, 1.0, c.X, c.Y, 1.0).Determinant;
         }
 
-        private void ProcessEventQueue(List<Vector2d> points, HeapPriorityQueue<VoronoiEvent> queue, IVoronoiStatusStructure status, VoronoiGraph graph)
+        // Process the next event in the event queue and handle it appropriately
+        private void ProcessEventQueue(HeapPriorityQueue<VoronoiEvent> queue, IVoronoiStatusStructure status, VoronoiGraph graph)
         {
             var queueEvent = queue.Dequeue();
             if (queueEvent.Type == VoronoiEventType.SiteEvent)
-                HandleSiteEvent(points, queue, status, graph, queueEvent);
+                HandleSiteEvent(queue, status, graph, queueEvent);
             else
-                HandleCircleEvent(points, queue, status, graph, queueEvent);
+                HandleCircleEvent(queue, status, graph, queueEvent);
         }
 
+        /// <summary>
+        /// Compute whether three adjacent arcs on the beach line will trigger a circle event, and register the event if necessary.
+        /// </summary>
+        /// <param name="arc1">The left arc</param>
+        /// <param name="arc2">The middle arc</param>
+        /// <param name="arc3">The right arc</param>
+        /// <param name="queue">The event queue</param>
+        /// <param name="yCutoff">The current Y-position of the sweep line</param>
         private void ComputeCircleEvent(VoronoiArcObject arc1, VoronoiArcObject arc2, VoronoiArcObject arc3, HeapPriorityQueue<VoronoiEvent> queue, double yCutoff)
         {
             // Only register circle event if CCW is correct (otherwise, we may register twice)
@@ -120,7 +220,8 @@ namespace CompGeoProject
             }
         }
 
-        private void HandleSiteEvent(List<Vector2d> points, HeapPriorityQueue<VoronoiEvent> queue, IVoronoiStatusStructure status, VoronoiGraph graph, VoronoiEvent evnt)
+        // Handle a site event off of the event queue
+        private void HandleSiteEvent(HeapPriorityQueue<VoronoiEvent> queue, IVoronoiStatusStructure status, VoronoiGraph graph, VoronoiEvent evnt)
         {
             var site = evnt.Sites[0];
 
@@ -168,7 +269,8 @@ namespace CompGeoProject
             }
         }
 
-        private void HandleCircleEvent(List<Vector2d> points, HeapPriorityQueue<VoronoiEvent> queue, IVoronoiStatusStructure status, VoronoiGraph graph, VoronoiEvent evnt)
+        // Handle a circle event off of the event queue
+        private void HandleCircleEvent(HeapPriorityQueue<VoronoiEvent> queue, IVoronoiStatusStructure status, VoronoiGraph graph, VoronoiEvent evnt)
         {
             // Remove the arc from the status structure
             VoronoiArcObject prevPrev, prev, succ, succSucc;
@@ -247,8 +349,9 @@ namespace CompGeoProject
                 queue.Enqueue(VoronoiEvent.CreateSiteEvent(site), -site.Location.Y);
             }
 
+            // While there are still events in the queue, resolve them
             while (queue.Count != 0)
-                ProcessEventQueue(points, queue, status, graph);
+                ProcessEventQueue(queue, status, graph);
 
             return graph;
         }

@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*******************************************************************************
+ * Author: Philip Etter
+ *
+ * Description: My implementation of the half-edge data structure.
+ *******************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +14,9 @@ using OpenTK;
 
 namespace CompGeoProject
 {
+    /// <summary>
+    /// A face in a voronoi graph, corresponding to a voronoi site.
+    /// </summary>
     class VoronoiSiteFace
     {
         public int ID = -1;
@@ -20,6 +29,9 @@ namespace CompGeoProject
         }
     }
 
+    /// <summary>
+    /// A half edge in a voronoi graph
+    /// </summary>
     class HalfEdge
     {
         public int ID = -1;
@@ -34,6 +46,9 @@ namespace CompGeoProject
         }
     }
 
+    /// <summary>
+    /// A vertex in a voronoi graph
+    /// </summary>
     class Vertex
     {
         public int ID = -1;
@@ -46,6 +61,9 @@ namespace CompGeoProject
         }
     }
 
+    /// <summary>
+    /// A half-edge representation of a voronoi graph
+    /// </summary>
     class VoronoiGraph
     {
         public List<VoronoiSiteFace> Faces = new List<VoronoiSiteFace>();
@@ -55,13 +73,17 @@ namespace CompGeoProject
         /// <summary>
         /// Cap any infinite edges to a finite region.
         /// </summary>
+        /// <param name="extensionLength">The maximum amount to extent an edge by</param>
         public void Complete(double extensionLength)
         {
             for (int i = 0, count = Edges.Count; i < count; ++i)
             {
                 var edge = Edges[i];
+
+                // Find edges without vertices
                 if (edge.Vertex == -1)
                 {
+                    // Cap these edges
                     edge.Next = edge.Opposite;
                     var face = Faces[edge.Face];
                     var op = Edges[edge.Opposite];

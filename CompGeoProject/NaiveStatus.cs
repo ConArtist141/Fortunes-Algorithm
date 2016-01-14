@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*******************************************************************************
+ * Author: Philip Etter
+ *
+ * Description: A naive representation of the beach line using a resizing array.
+ * This code is merely for comparison and debugging purposes. Use the balanced
+ * binary tree implementation of the beach line instead.
+ *******************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,11 +15,27 @@ using OpenTK;
 
 namespace CompGeoProject
 {
+    /// <summary>
+    /// A representation of the beach line using a resizing array. Use the 
+    /// balanced binary tree implementation intead.
+    /// </summary>
     class NaiveStatus : IVoronoiStatusStructure
     {
+        /// <summary>
+        /// A list of separators between the arcs on the beach line.
+        /// </summary>
         private List<HalfEdge> separators = new List<HalfEdge>();
+        /// <summary>
+        /// A list of arcs on the beach line.
+        /// </summary>
         private List<VoronoiArcObject> arcs = new List<VoronoiArcObject>();
+        /// <summary>
+        /// The voronoi graph under construction.
+        /// </summary>
         private VoronoiGraph graph;
+        /// <summary>
+        /// Used for debug purposes only, number of calls to CheckDebug.
+        /// </summary>
         private int debugCalls = 0;
 
         public bool IsEmpty
@@ -28,6 +52,9 @@ namespace CompGeoProject
             set { graph = value; }
         }
 
+        /// <summary>
+        /// Checks the validity of the tree structure and outputs the contents of the tree.
+        /// </summary>
         private void DebugCheck()
         {
             Console.WriteLine("Debug Check {0}: ", debugCalls++);

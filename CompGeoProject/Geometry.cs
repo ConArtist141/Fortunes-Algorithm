@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*******************************************************************************
+ * Author: Philip Etter
+ *
+ * Description: A handful of geometry tools.
+ *******************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,11 +14,20 @@ using OpenTK;
 
 namespace CompGeoProject
 {
+    /// <summary>
+    /// A structure to represent a directed (parameterized) line.
+    /// </summary>
     struct DirectedLine
     {
         public Vector2d Direction;
         public Vector2d Start;
 
+        /// <summary>
+        /// Gets the perpendicular bisector of two points.
+        /// </summary>
+        /// <param name="p1">First point</param>
+        /// <param name="p2">Second point</param>
+        /// <returns>The perpendicular bisector</returns>
         public static DirectedLine GetPerpendicularBisector(Vector2d p1, Vector2d p2)
         {
             var diff = p2 - p1;
@@ -25,11 +40,24 @@ namespace CompGeoProject
             };
         }
 
+        /// <summary>
+        /// Gets the intersection of two lines, one directed and the other undirected.
+        /// </summary>
+        /// <param name="line1">First line, directed</param>
+        /// <param name="line2">Second line, undirected</param>
+        /// <returns>The distance along the directed line the collision occurs</returns>
         public static double GetIntersection(DirectedLine line1, Line line2)
         {
             return (line2.Distance - Vector2d.Dot(line1.Start, line2.Normal)) / Vector2d.Dot(line1.Direction, line2.Normal);
         }
 
+        /// <summary>
+        /// Gets the intersection of two lines, one directed and the other undirected.
+        /// </summary>
+        /// <param name="line1">First line, directed</param>
+        /// <param name="line2">Second line, undirected</param>
+        /// <param name="time">The distance along the directed</param>
+        /// <returns>Whether the two lines intersect</returns>
         public static bool GetIntersection(DirectedLine line1, Line line2, ref double time)
         {
             var res = Vector2d.Dot(line1.Direction, line2.Normal);
@@ -40,17 +68,31 @@ namespace CompGeoProject
             return true;
         }
 
+        /// <summary>
+        /// Gets the position of a parameter value along this line.
+        /// </summary>
+        /// <param name="time">The parameter value</param>
+        /// <returns>The position</returns>
         public Vector2d GetPosition(double time)
         {
             return Start + Direction * time;
         }
     }
 
+    /// <summary>
+    /// A structure to implicitly represent a line.
+    /// </summary>
     struct Line
     {
         public Vector2d Normal;
         public double Distance;
 
+        /// <summary>
+        /// Get the perpendicular bisector of two points.
+        /// </summary>
+        /// <param name="p1">First point</param>
+        /// <param name="p2">Second point</param>
+        /// <returns>The resulting line</returns>
         public static Line GetPerpendicularBisector(Vector2d p1, Vector2d p2)
         {
             Vector2d diff = p1 - p2;
@@ -60,6 +102,13 @@ namespace CompGeoProject
             return new Line() { Normal = diff, Distance = (dist1 + dist2) / 2.0d };
         }
 
+        /// <summary>
+        /// Get the intersection of two lines.
+        /// </summary>
+        /// <param name="l1">The first line</param>
+        /// <param name="l2">The second line</param>
+        /// <param name="position">The position of intersection</param>
+        /// <returns>Whether or not the lines intersect</returns>
         public static bool GetIntersection(Line l1, Line l2, ref Vector2d position)
         {
             var matrix = new Matrix2d(l1.Normal, l2.Normal);
@@ -73,7 +122,13 @@ namespace CompGeoProject
             return true;
         }
 
-        // Computes the point equidistant from two points and a line (given by y = yLine)
+        /// <summary>
+        ///  Computes the point equidistant from two points and a line (given by y = yLine)
+        /// </summary>
+        /// <param name="p1">First point</param>
+        /// <param name="p2">Second point</param>
+        /// <param name="yLine">The y-value of the line</param>
+        /// <returns>The resulting point</returns>
         public static Vector2d ComputeEquidistantPoint(Vector2d p1, Vector2d p2, double yLine)
         {
             var div1 = 1.0 / (2.0 * (p1.Y - yLine));

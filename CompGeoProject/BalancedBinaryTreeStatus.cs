@@ -2,8 +2,9 @@
  * Author: Philip Etter
  *
  * Description: This is the balanced binary tree data structure which I use
- * to maintain the breach line of parabolas.
+ * to maintain the beach line of parabolas.
  *******************************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,13 +15,36 @@ using OpenTK;
 
 namespace CompGeoProject
 {
+    /// <summary>
+    /// A node in the balanced binary tree. The node may either be an arc node or
+    /// a separator node. Arc nodes must be leaves of the tree and separator nodes
+    /// must be in the interior.
+    /// </summary>
     class TreeNode
     {
+        /// <summary>
+        /// An arc in the beach line, if this is not null, then this node is an arc node.
+        /// </summary>
         public VoronoiArcObject Arc;
+        /// <summary>
+        /// A separator (half-edge) between two sites, if this is not null, then this node is a separator node.
+        /// </summary>
         public HalfEdge Separator;
+        /// <summary>
+        /// The rank of this node in the tree. Used for balancing.
+        /// </summary>
         public int Rank = 0;
+        /// <summary>
+        /// If this is a separator node, then this is the left child. Otherwise, it is the previous arc on the beach line.
+        /// </summary>
         public TreeNode Left;
+        /// <summary>
+        /// If this is a separator node, then this is the right child. Otherwise, it is the next arc on the beach line.
+        /// </summary>
         public TreeNode Right;
+        /// <summary>
+        /// The parent of this node.
+        /// </summary>
         public TreeNode Parent;
 
         public static TreeNode CreateArcNode(VoronoiArcObject arcObject, TreeNode parent, TreeNode prev, TreeNode next)
@@ -56,11 +80,26 @@ namespace CompGeoProject
         }
     }
 
+    /// <summary>
+    /// A beach line status structure which uses a balanced binary tree internally.
+    /// </summary>
     class BalancedBinaryTreeStatus : IVoronoiStatusStructure
     {
+        /// <summary>
+        /// The root of the balanced binary tree.
+        /// </summary>
         private TreeNode Root;
+        /// <summary>
+        /// A map from arcs on the beach line to nodes in the tree. Allows O(lg n) lookup of arcs.
+        /// </summary>
         private Dictionary<VoronoiArcObject, TreeNode> LeafMap = new Dictionary<VoronoiArcObject, TreeNode>();
+        /// <summary>
+        /// The voronoi graph under construction.
+        /// </summary>
         private VoronoiGraph graph;
+        /// <summary>
+        /// Used for debug purposes only, number of calls to CheckDebug.
+        /// </summary>
         private int debugCalls = 0;
 
         public bool IsEmpty
@@ -86,6 +125,12 @@ namespace CompGeoProject
             LeafMap[Root.Arc] = Root;
         }
 
+        /// <summary>
+        /// Find the separating edges on both sides of the arc node specified.
+        /// </summary>
+        /// <param name="arcNode">The query node</param>
+        /// <param name="leftSeparator">The separating edge on the left</param>
+        /// <param name="rightSeparator">The separating edge on the right</param>
         protected void FindAdjacentSeparators(TreeNode arcNode, out TreeNode leftSeparator, out TreeNode rightSeparator)
         {
             var sep1 = arcNode.Parent;
@@ -129,6 +174,7 @@ namespace CompGeoProject
             succ = node.Right?.Arc;
             succSucc = node.Right?.Right?.Arc;
 
+            // Find the separators on either side of this arc node
             TreeNode leftSep;
             TreeNode rightSep;
             FindAdjacentSeparators(node, out leftSep, out rightSep);
@@ -137,6 +183,11 @@ namespace CompGeoProject
             succSplittingEdge = rightSep?.Separator;
         }
 
+        /// <summary>
+        /// Get all of the separator nodes of this tree with an in order traversal.
+        /// </summary>
+        /// <param name="root">The root at which to start</param>
+        /// <returns>An enumerable of the separator nodes</returns>
         private IEnumerable<TreeNode> GetSeparatorsInOrder(TreeNode root)
         {
             if (root.Separator != null)
@@ -149,6 +200,9 @@ namespace CompGeoProject
             }
         }
 
+        /// <summary>
+        /// Checks the validity of the tree structure and outputs the contents of the tree.
+        /// </summary>
         private void DebugCheck()
         {
             Console.WriteLine("Debug Check {0}: ", debugCalls++);
@@ -275,6 +329,10 @@ namespace CompGeoProject
             PropogateRankOnInsert(leftMiddleSeparatorNode);
         }
 
+        /// <summary>
+        /// Propogates rank and rebalances the tree on a deletion.
+        /// </summary>
+        /// <param name="startNode">The (0, 0)-separator node to start at</param>
         private void PropogateRankOnDelete(TreeNode startNode)
         {
             for (TreeNode current = startNode.Parent; current != null; current = current.Parent)
@@ -286,6 +344,10 @@ namespace CompGeoProject
             }
         }
 
+        /// <summary>
+        /// Propogates rank and rebalances the tree on an insertion.
+        /// </summary>
+        /// <param name="startNode">The starting node to begin rebalancing</param>
         private void PropogateRankOnInsert(TreeNode startNode)
         {
             // Propogate rank difference correctly + balance tree
@@ -296,6 +358,11 @@ namespace CompGeoProject
             }
         }
 
+        /// <summary>
+        /// Perform an AA-split on the specified node.
+        /// </summary>
+        /// <param name="node">Node on which to perform split</param>
+        /// <returns>Top node after rotation</returns>
         private TreeNode BalanceSplit(TreeNode node)
         {
             if (node.Right.Arc != null || node.Right.Right == null || node.Right.Right.Arc != null)
@@ -332,6 +399,11 @@ namespace CompGeoProject
                 return node;
         }
 
+        /// <summary>
+        /// Perform an AA-skew on the specified node.
+        /// </summary>
+        /// <param name="node">The node on which to perform a skew</param>
+        /// <returns>Top node after rotation</returns>
         private TreeNode BalanceSkew(TreeNode node)
         {
             if (node.Left.Arc != null)

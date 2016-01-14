@@ -144,7 +144,8 @@ namespace CompGeoProject
         /// <param name="newArc">The new arc to insert</param>
         /// <param name="splittingEdgeCurrentSide">The splitting edge on the left of the new arc</param>
         /// <param name="splittingEdgeNewSide">The splitting edge on the right of the new arc</param>
-        void Split(VoronoiArcObject splitArc, VoronoiArcObject newArc, HalfEdge splittingEdgeCurrentSide, HalfEdge splittingEdgeNewSide);
+        void Split(VoronoiArcObject splitArc, VoronoiArcObject newArc, 
+            HalfEdge splittingEdgeCurrentSide, HalfEdge splittingEdgeNewSide);
 
         /// <summary>
         /// Find the arc above the specified point.
@@ -193,7 +194,8 @@ namespace CompGeoProject
         /// <param name="arc3">The right arc</param>
         /// <param name="queue">The event queue</param>
         /// <param name="yCutoff">The current Y-position of the sweep line</param>
-        private void ComputeCircleEvent(VoronoiArcObject arc1, VoronoiArcObject arc2, VoronoiArcObject arc3, HeapPriorityQueue<VoronoiEvent> queue, double yCutoff)
+        private void ComputeCircleEvent(VoronoiArcObject arc1, VoronoiArcObject arc2, 
+            VoronoiArcObject arc3, HeapPriorityQueue<VoronoiEvent> queue, double yCutoff)
         {
             // Only register circle event if CCW is correct (otherwise, we may register twice)
             if (CCW(arc1.Site.Location, arc2.Site.Location, arc3.Site.Location) < 0.0)
@@ -221,7 +223,8 @@ namespace CompGeoProject
         }
 
         // Handle a site event off of the event queue
-        private void HandleSiteEvent(HeapPriorityQueue<VoronoiEvent> queue, IVoronoiStatusStructure status, VoronoiGraph graph, VoronoiEvent evnt)
+        private void HandleSiteEvent(HeapPriorityQueue<VoronoiEvent> queue, IVoronoiStatusStructure status, 
+            VoronoiGraph graph, VoronoiEvent evnt)
         {
             var site = evnt.Sites[0];
 
@@ -270,7 +273,8 @@ namespace CompGeoProject
         }
 
         // Handle a circle event off of the event queue
-        private void HandleCircleEvent(HeapPriorityQueue<VoronoiEvent> queue, IVoronoiStatusStructure status, VoronoiGraph graph, VoronoiEvent evnt)
+        private void HandleCircleEvent(HeapPriorityQueue<VoronoiEvent> queue, 
+            IVoronoiStatusStructure status, VoronoiGraph graph, VoronoiEvent evnt)
         {
             // Remove the arc from the status structure
             VoronoiArcObject prevPrev, prev, succ, succSucc;

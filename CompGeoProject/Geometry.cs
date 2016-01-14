@@ -48,7 +48,8 @@ namespace CompGeoProject
         /// <returns>The distance along the directed line the collision occurs</returns>
         public static double GetIntersection(DirectedLine line1, Line line2)
         {
-            return (line2.Distance - Vector2d.Dot(line1.Start, line2.Normal)) / Vector2d.Dot(line1.Direction, line2.Normal);
+            return (line2.Distance - Vector2d.Dot(line1.Start, line2.Normal)) 
+                / Vector2d.Dot(line1.Direction, line2.Normal);
         }
 
         /// <summary>

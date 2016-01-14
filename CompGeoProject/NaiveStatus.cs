@@ -84,8 +84,10 @@ namespace CompGeoProject
             return arcs[i];
         }
 
-        public void GetNeighborhood(VoronoiArcObject obj, out VoronoiArcObject prevPrev, out VoronoiArcObject prev, out VoronoiArcObject succ, 
-            out VoronoiArcObject succSucc, out HalfEdge prevSplittingEdge, out HalfEdge succSplittingEdge)
+        public void GetNeighborhood(VoronoiArcObject obj, out VoronoiArcObject prevPrev, 
+            out VoronoiArcObject prev, out VoronoiArcObject succ, 
+            out VoronoiArcObject succSucc, out HalfEdge prevSplittingEdge, 
+            out HalfEdge succSplittingEdge)
         {
             var i = arcs.IndexOf(obj);
             prev = (i <= 0 ? null : arcs[i - 1]);
@@ -109,8 +111,8 @@ namespace CompGeoProject
             separators.RemoveAt(i);
         }
 
-        public void Split(VoronoiArcObject currentObj, VoronoiArcObject newObj, HalfEdge splittingEdgeCurrentSide,
-            HalfEdge splittingEdgeNewSide)
+        public void Split(VoronoiArcObject currentObj, VoronoiArcObject newObj, 
+            HalfEdge splittingEdgeCurrentSide, HalfEdge splittingEdgeNewSide)
         {
             var i = arcs.IndexOf(currentObj);
             arcs.InsertRange(i + 1, new VoronoiArcObject[] { newObj,

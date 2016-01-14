@@ -165,8 +165,10 @@ namespace CompGeoProject
             }
         }
 
-        public void GetNeighborhood(VoronoiArcObject obj, out VoronoiArcObject prevPrev, out VoronoiArcObject prev, out VoronoiArcObject succ,
-            out VoronoiArcObject succSucc, out HalfEdge prevSplittingEdge, out HalfEdge succSplittingEdge)
+        public void GetNeighborhood(VoronoiArcObject obj, out VoronoiArcObject prevPrev, 
+            out VoronoiArcObject prev, out VoronoiArcObject succ,
+            out VoronoiArcObject succSucc, out HalfEdge prevSplittingEdge, 
+            out HalfEdge succSplittingEdge)
         {
             var node = LeafMap[obj];
             prev = node.Left?.Arc;
@@ -239,6 +241,12 @@ namespace CompGeoProject
 
         public void Remove(VoronoiArcObject obj, HalfEdge replacementEdge)
         {
+            /* To peform a removal, we need to find the higher of the two
+            separator nodes for the splitting lines surrounding obj. The
+            higher one can them be overwritten by the replacement edge.
+            The lower one is removed from the tree and the twin of the
+            arc obj is moved up in the tree to replace it. */
+             
             // Find the high separator
             var node = LeafMap[obj];
 
@@ -286,7 +294,8 @@ namespace CompGeoProject
             PropogateRankOnDelete(twin);
         }
 
-        public void Split(VoronoiArcObject currentObj, VoronoiArcObject newObj, HalfEdge splittingEdgeCurrentSide, HalfEdge splittingEdgeNewSide)
+        public void Split(VoronoiArcObject currentObj, VoronoiArcObject newObj, 
+            HalfEdge splittingEdgeCurrentSide, HalfEdge splittingEdgeNewSide)
         {
             var node = LeafMap[currentObj];
 
